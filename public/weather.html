@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title>City Finder</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+</head>
+<body>
+  <form>
+    <div id="left">
+      <h1>Enter A Utah City: </h1><input type="text" id="cityfield" value="">
+      <br>
+      <h1>Suggestion:</h1> <div class="scroll"><span id="txtHint"></span></div>
+      <br>
+    </div>
+    <div id="right">
+      <h1>Enter A Word:</h1> <input type="text" id="wordfield" value=""><input id="button" type="submit" value="Search">
+      <br>
+      <h1>Definition:</h1> <span id="wordHint">Search a word!</span>
+    </div>
+  </form>
+  <script>
+
+    $( "#cityfield" ).keyup(function() {
+      var url = "getcity?q="+$("#cityfield").val();
+      $.getJSON(url,function(data) {
+        var everything;
+        everything = "<ul>";
+        $.each(data, function(i,item) {
+          everything += "<li> "+data[i].city;
+        });
+        everything += "</ul>";
+        $("#txtHint").html(everything);
+      });
+    });
+
+    $("#button").click(function(e) {
+      var value = $("#wordfield").val().toLowerCase();
+      e.preventDefault();
+
+      var url = "/getword?q=" + value;
+
+      $.getJSON(url, function(data) {
+
+        var everything = "<ol>";
+        if(data == ''){
+          alert("Enter a valid word!");
+          $("#wordfield").val("");
+        }
+        $.each(data, function(i, item) {
+          everything += "<li>" + item.defenition;
+        });
+        everything += "</ol>";
+        $("#wordHint").html(everything);
+      })
+      .error(function(){
+        alert("Error, enter a word!");
+      });      
+    });
+  </script>
+</body>
+</html>
+
